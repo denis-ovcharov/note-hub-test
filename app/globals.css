@@ -1,4 +1,23 @@
 :root {
+  --bg-color: #ffffff;
+  --surface-color: #f6f8fa;
+  --surface-hover: #eaeef2;
+  --text-primary: #1f2328;
+  --text-secondary: #656d76;
+  --accent-primary: #8a2be2;
+  --accent-hover: #9b4dff;
+  --border-color: #d0d7de;
+  --danger-color: #cf222e;
+  --danger-hover: #a40e26;
+  --success-color: #1a7f37;
+  --success-hover: #116329;
+  --tag-bg: rgba(138, 43, 226, 0.1);
+  --tag-border: rgba(138, 43, 226, 0.2);
+  --tag-text: #6e1db5;
+  --header-bg: rgba(255, 255, 255, 0.7);
+}
+
+.dark {
   --bg-color: #0d1117;
   --surface-color: #161b22;
   --surface-hover: #21262d;
@@ -14,6 +33,7 @@
   --tag-bg: rgba(138, 43, 226, 0.15);
   --tag-border: rgba(138, 43, 226, 0.4);
   --tag-text: #c084fc;
+  --header-bg: rgba(22, 27, 34, 0.7);
 }
 
 body {
