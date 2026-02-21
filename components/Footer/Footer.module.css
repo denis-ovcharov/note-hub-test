@@ -1,0 +1,30 @@
+/* components/Footer.module.css */
+
+.footer {
+  padding: 24px 20px;
+  background-color: var(--surface-color);
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+}
+
+.wrap {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.footer a {
+  color: var(--accent-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.footer a:hover {
+  color: var(--accent-hover);
+  text-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
+}

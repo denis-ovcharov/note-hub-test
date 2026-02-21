@@ -1,0 +1,93 @@
+import axios from "axios";
+import type { Note, NoteTag } from "../types/note";
+import toast from "react-hot-toast";
+
+const NOTEHUB_TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
+const URL = "https://notehub-public.goit.study/api/notes";
+interface FetchNotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
+export async function fetchNotes(
+  query: string,
+  page: number = 1,
+  perPage: number = 9,
+  tag?: NoteTag,
+) {
+  const params: Record<string, string | number> = {
+    search: query,
+    page,
+    perPage,
+  };
+
+  if (tag && tag !== "all") {
+    params.tag = tag;
+  }
+
+  const options = {
+    method: "GET",
+    url: `${URL}`,
+    params,
+    headers: {
+      Authorization: `Bearer ${NOTEHUB_TOKEN}`,
+    },
+  };
+
+  const { data } = await axios.request<FetchNotesResponse>(options);
+
+  if (data.notes.length === 0) {
+    toast.error("No matches for your query");
+  }
+
+  return {
+    notes: data.notes,
+    totalPages: data.totalPages,
+  };
+}
+export async function deleteNote(id: string) {
+  const { data } = await axios.delete<Note>(`${URL}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${NOTEHUB_TOKEN}`,
+    },
+  });
+  return data;
+}
+
+interface NoteData {
+  title: string;
+  content: string;
+  tag: NoteTag;
+}
+
+export async function createNote(noteData: NoteData) {
+  const { data } = await axios.post<Note>(`${URL}`, noteData, {
+    headers: {
+      Authorization: `Bearer ${NOTEHUB_TOKEN}`,
+    },
+  });
+  return data;
+}
+
+export async function fetchNoteById(id: string) {
+  const { data } = await axios.get<Note>(`${URL}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${NOTEHUB_TOKEN}`,
+    },
+  });
+  return data;
+}
+
+interface UpdateNoteVariables {
+  id: string;
+  noteData: NoteData;
+}
+
+export async function updateNote({ id, noteData }: UpdateNoteVariables) {
+  const { data } = await axios.patch<Note>(`${URL}/${id}`, noteData, {
+    headers: {
+      Authorization: `Bearer ${NOTEHUB_TOKEN}`,
+    },
+  });
+  return data;
+}

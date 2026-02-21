@@ -1,0 +1,34 @@
+.main {
+  flex: 1;
+}
+
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 32px;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #e6edf3, var(--accent-hover));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 24px;
+  text-align: center;
+  letter-spacing: -1px;
+}
+
+.description {
+  font-size: 18px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  text-align: center;
+}
