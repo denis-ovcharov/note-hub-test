@@ -16,10 +16,7 @@
 .title {
   font-size: 42px;
   font-weight: 800;
-  background: linear-gradient(90deg, #e6edf3, var(--accent-hover));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
   margin-bottom: 24px;
   text-align: center;
   letter-spacing: -1px;

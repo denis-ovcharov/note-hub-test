@@ -20,7 +20,7 @@
 }
 
 .menuLink:hover {
-  background-color: rgba(138, 43, 226, 0.1);
+  background-color: var(--surface-hover);
   color: var(--text-primary);
   transform: translateX(4px);
 }
