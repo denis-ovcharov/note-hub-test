@@ -6,6 +6,8 @@ import { ErrorMessage, Field, Form, Formik, type FormikHelpers } from "formik";
 import { createNote, updateNote } from "../../lib/api";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
+import { useNoteDraftStore } from "@/lib/stores/noteStore";
+
 
 interface InitialValues {
   title: string;
@@ -22,16 +24,28 @@ interface NoteFormProps {
 export default function NoteForm({ mode, note, onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
 
-  const initialValues: InitialValues = {
-    title: note?.title || "",
-    content: note?.content || "",
-    tag: note?.tag || "Work",
-  };
+  const { draft, setDraft, clearDraft } = useNoteDraftStore();
+
+  // В режимі "create" — беремо значення з draft (Zustand),
+  // в режимі "edit" — з існуючої нотатки
+  const initialValues: InitialValues =
+    mode === "create"
+      ? {
+          title: draft.title,
+          content: draft.content,
+          tag: draft.tag as NoteTag,
+        }
+      : {
+          title: note?.title || "",
+          content: note?.content || "",
+          tag: note?.tag || "Work",
+        };
 
   const { mutate: createMutate } = useMutation({
     mutationFn: createNote,
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      clearDraft();
       onClose();
       toast.success("Note created successfully!");
     },
@@ -65,7 +79,7 @@ export default function NoteForm({ mode, note, onClose }: NoteFormProps) {
         { id: note.id, noteData: values },
         {
           onSuccess: () => actions.resetForm(),
-        }
+        },
       );
     }
   };
@@ -85,13 +99,29 @@ export default function NoteForm({ mode, note, onClose }: NoteFormProps) {
         onSubmit={handleSubmit}
         initialValues={initialValues}
         validationSchema={validationSchema}
+
       >
-        {({ isSubmitting, isValid, dirty }) => (
+        {({ isSubmitting, isValid, dirty, handleChange: formikHandleChange }) => (
           <Form className={css.form}>
             <div className={css.formGroup}>
               <label htmlFor="title">Title</label>
-              <Field id="title" type="text" name="title" className={css.input} />
-              <ErrorMessage component="span" name="title" className={css.error} />
+              <Field
+                id="title"
+                type="text"
+                name="title"
+                className={css.input}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  formikHandleChange(e); // оновлюємо Formik
+                  if (mode === "create") {
+                    setDraft({ ...draft, [e.target.name]: e.target.value }); // оновлюємо Zustand
+                  }
+                }}
+              />
+              <ErrorMessage
+                component="span"
+                name="title"
+                className={css.error}
+              />
             </div>
 
             <div className={css.formGroup}>
@@ -102,6 +132,12 @@ export default function NoteForm({ mode, note, onClose }: NoteFormProps) {
                 name="content"
                 rows={8}
                 className={css.textarea}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  formikHandleChange(e);
+                  if (mode === "create") {
+                    setDraft({ ...draft, [e.target.name]: e.target.value });
+                  }
+                }}
               />
               <ErrorMessage
                 component="span"
@@ -112,7 +148,18 @@ export default function NoteForm({ mode, note, onClose }: NoteFormProps) {
 
             <div className={css.formGroup}>
               <label htmlFor="tag">Tag</label>
-              <Field as="select" id="tag" name="tag" className={css.select}>
+              <Field
+                as="select"
+                id="tag"
+                name="tag"
+                className={css.select}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  formikHandleChange(e);
+                  if (mode === "create") {
+                    setDraft({ ...draft, [e.target.name]: e.target.value });
+                  }
+                }}
+              >
                 {tags.map((tagOption) => (
                   <option key={tagOption} value={tagOption}>
                     {tagOption}
@@ -130,10 +177,12 @@ export default function NoteForm({ mode, note, onClose }: NoteFormProps) {
               >
                 Cancel
               </button>
-              <button 
-                type="submit" 
-                className={css.submitButton} 
-                disabled={isSubmitting || (mode === "create" && !dirty) || !isValid}
+              <button
+                type="submit"
+                className={css.submitButton}
+                disabled={
+                  isSubmitting || (mode === "create" && !dirty) || !isValid
+                }
               >
                 {mode === "create" ? "Create note" : "Edit note"}
               </button>
@@ -144,3 +193,4 @@ export default function NoteForm({ mode, note, onClose }: NoteFormProps) {
     </>
   );
 }
+

@@ -54,7 +54,7 @@ export async function deleteNote(id: string) {
   return data;
 }
 
-interface NoteData {
+export interface NoteData {
   title: string;
   content: string;
   tag: NoteTag;
